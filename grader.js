@@ -39,18 +39,19 @@ var assertFileExists = function(infile) {
 };
 
 var cheerioHtmlFile = function(htmlfile) {
-    console.log("Function cheerioHtmlFile ran with: " + htmlfile);
     return cheerio.load(fs.readFileSync(htmlfile));
 };
 
+var cheerioURL = function(htmlurl) {
+    return cheerio.load(htmlurl);
+};
+
 var loadChecks = function(checksfile) {
-    console.log("Function loadChecks ran with: " + checksfile);
     return JSON.parse(fs.readFileSync(checksfile));
 };
 
 // takes in a string of HTML and a checks file and tests it
 var checkHtml = function(html, checksfile) {
-    console.log("Function checkHtml ran with html:" + html + "and checksfile:" + checksfile);
     $ = html;
     var checks = loadChecks(checksfile).sort();
     var out = {};
@@ -62,12 +63,10 @@ var checkHtml = function(html, checksfile) {
 };
 
 var processFormat = function(htmlfile, url, checksfile) {
-    console.log("RAN: processFormat(" + htmlfile + ", " + url + ", " + checksfile);
     if (!htmlfile) { // we are using url
 	rest.get(url).on('complete', function(result) {
-	    console.log("rest.get is complete");
-	    var out = checkHtml(cheerio.load(result, checksfile));
-	    return out;
+	    console.log(checkHtml(cheerioURL(result), checksfile));
+	    return checkHtml(cheerioURL(result), checksfile);
 	});
     } else {
 	return checkHtml(cheerioHtmlFile(htmlfile), checksfile);
